@@ -1,5 +1,18 @@
 function handleLogout() {
-    isLoggedIn = false;
+    // Полная очистка
+    localStorage.removeItem('playerName');
+    document.body.style.overflow = 'hidden';
+    
+    // Закрытие WebApp перед переходом
+    if (window.Telegram?.WebApp?.close) {
+        Telegram.WebApp.close();
+    }
+    
+    // Жесткий редирект с очисткой истории
+    setTimeout(() => {
+        window.location.replace('Page1.html?logout=1&t=' + Date.now());
+    }, 300);
+}
 
     // Удаляем сохраненное имя
     localStorage.removeItem('playerName');

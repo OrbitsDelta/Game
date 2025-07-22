@@ -151,4 +151,27 @@
             localStorage.setItem('playerName', name);
         });
     </script>
+    // Проверяем, есть ли уже сохраненное имя
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedName = localStorage.getItem('playerName');
+        if (savedName) {
+            // Если имя есть, перенаправляем сразу в игру
+            window.location.href = 'game.html?name=' + encodeURIComponent(savedName);
+        }
+    });
+
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        const nameInput = document.getElementById('name');
+        const name = nameInput.value.trim();
+        
+        if (name.length < 3 || name.length > 15) {
+            alert('Имя должно содержать от 3 до 15 символов');
+            e.preventDefault();
+            return;
+        }
+        
+        // Сохраняем имя в localStorage
+        localStorage.setItem('playerName', name);
+    });
+</script>
 </body></html>

@@ -62,10 +62,16 @@
 </div>
 
 <script>
-  // Ваш JavaScript код для кнопки
-  document.getElementById('neonBtn').addEventListener('click', function() {
-    window.location.href = 'Page1.html';
-  });
+    // Проверяем, есть ли сохраненное имя
+    document.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem('playerName')) {
+            window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
+        }
+    });
+
+    document.getElementById('neonBtn').addEventListener('click', function() {
+        window.location.href = 'page1.html';
+    });
 </script>
 
 </body>

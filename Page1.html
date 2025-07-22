@@ -134,29 +134,27 @@
             Имя должно содержать от 3 до 15 символов&nbsp;
         </p>
     </div>
-
-
     
 <script>
-        document.getElementById('regForm').addEventListener('submit', function(e) {
-            const nameInput = document.getElementById('name');
-            const name = nameInput.value.trim();
-            
-            if (name.length < 3 || name.length > 15) {
-                alert('Имя должно содержать от 3 до 15 символов');
-                e.preventDefault();
-                return;
-            }
-            
-            localStorage.setItem('playerName', name);
-        });
-    </script>
-    // Проверяем, есть ли уже сохраненное имя
+    // Полная очистка перед регистрацией
     document.addEventListener('DOMContentLoaded', function() {
-        const savedName = localStorage.getItem('playerName');
-        if (savedName) {
-            // Если имя есть, перенаправляем сразу в игру
-            window.location.href = 'game.html?name=' + encodeURIComponent(savedName);
+        // Очищаем возможные артефакты WebApp
+        if (window.Telegram?.WebApp?.close) {
+            Telegram.WebApp.close();
+        }
+        
+        // Проверяем параметр выхода
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('logout') === '1') {
+            // Полный сброс состояния
+            localStorage.clear();
+            document.body.style.overflow = 'hidden';
+            document.body.innerHTML = document.body.innerHTML; // Принудительный ререндер
+        }
+        
+        // Автоперенаправление только для не вышедших пользователей
+        if (!params.get('logout') && localStorage.getItem('playerName')) {
+            window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
         }
     });
 
@@ -170,8 +168,12 @@
             return;
         }
         
-        // Сохраняем имя в localStorage
         localStorage.setItem('playerName', name);
+        
+        // Принудительное обновление WebApp
+        if (window.Telegram?.WebApp?.expand) {
+            Telegram.WebApp.expand();
+        }
     });
 </script>
 </body></html>

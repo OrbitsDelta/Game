@@ -183,26 +183,13 @@ body::after {
             localStorage.removeItem('playerName');
             // Принудительный ререндер
             setTimeout(() => document.body.offsetHeight, 50);
+            return; // Важно: прерываем выполнение, чтобы не было перенаправления
         }
         
         // Проверка имени только при чистом открытии
         if (!window.location.search && localStorage.getItem('playerName')) {
             window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
         }
-    });
-
-    // Обработчик формы
-    document.getElementById('regForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('name').value.trim();
-        
-        if (name.length < 3 || name.length > 15) {
-            alert('Имя должно содержать от 3 до 15 символов');
-            return;
-        }
-        
-        localStorage.setItem('playerName', name);
-        window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
     });
 </script>
 </body></html>

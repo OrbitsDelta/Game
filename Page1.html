@@ -191,5 +191,33 @@ body::after {
             window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
         }
     });
+
+    // Обработчик формы (обновленный для Telegram WebApp)
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const tg = window.Telegram?.WebApp;
+        
+        if (name.length < 3 || name.length > 15) {
+            alert('Имя должно содержать от 3 до 15 символов');
+            return;
+        }
+        
+        // Сохраняем имя в localStorage
+        localStorage.setItem('playerName', name);
+        
+        // Если это Telegram WebApp - отправляем данные в бота и закрываем WebApp
+        if (tg) {
+            tg.sendData(JSON.stringify({ 
+                action: 'register', 
+                name: name 
+            }));
+            tg.close();
+        } 
+        // Если обычный браузер - перенаправляем в игру
+        else {
+            window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
+        }
+    });
 </script>
 </body></html>

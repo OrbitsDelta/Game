@@ -63,15 +63,18 @@
 
 <script>
     // Проверяем, есть ли сохраненное имя
-    document.addEventListener('DOMContentLoaded', function() {
-        if (localStorage.getItem('playerName')) {
-            window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
-        }
-    });
-
-    document.getElementById('neonBtn').addEventListener('click', function() {
-        window.location.href = 'Page1.html';
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    const tg = window.Telegram?.WebApp;
+    
+    // Проверяем, есть ли сохраненное имя в localStorage или Telegram
+    const playerName = localStorage.getItem('playerName') || 
+                      (tg?.initDataUnsafe?.user?.first_name || 'Гость');
+    
+    if (playerName && playerName !== 'Гость') {
+        tg?.expand(); // Раскрываем WebApp на весь экран
+        window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
+    }
+});
 </script>
 
 </body>

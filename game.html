@@ -1,17 +1,16 @@
-function handleLogout() {
-    // Полная очистка данных
-    localStorage.removeItem('playerName');
-    
-    // Сброс UI
-    profileName.textContent = 'Гость';
-    gameName.textContent = 'Не указано';
-    profileAvatar.src = 'https://cdn-icons-png.flaticon.com/512/147/147144.png';
-    regDate.textContent = 'Не указана';
-    updateLoginStatus();
-    
-    // Закрытие модальных окон
-    hideConfirmModal();
-    
-    // Упрощенный редирект
-    window.location.href = 'Page1.html?logout=1&t=' + Date.now();
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>OrbitsDelta - Игра</title>
+</head>
+<body>
+    <!-- Ваш игровой контент -->
+    <script>
+        function handleLogout() {
+            localStorage.removeItem('playerName');
+            window.location.href = 'Page1.html?logout=1';
+        }
+    </script>
+</body>
+</html>

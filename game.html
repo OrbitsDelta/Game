@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>OrbitsDelta - Игра</title>
+    <style>
+        body { margin: 0; background: #000; }
+    </style>
 </head>
 <body>
-    <!-- Ваш игровой контент -->
+    <div id="game"></div>
+    
     <script>
         function handleLogout() {
             localStorage.removeItem('playerName');
             window.location.href = 'Page1.html?logout=1';
         }
+        // Тест: если этот alert сработает, значит JS выполняется
+        alert("game.html загружен!");
     </script>
 </body>
 </html>

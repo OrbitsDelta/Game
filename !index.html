@@ -56,12 +56,12 @@
     Перед началом, пожалуйста, зарегистрируйтесь
   </p>
   
-  <button class="neon-btn" id="neonBtn">
-    Начать регистрацию
-  </button>
-</div>
-
+  <button class="neon-btn" id="neonBtn">Начать регистрацию</button>
 <script>
+    document.getElementById('neonBtn').addEventListener('click', function() {
+        window.location.href = 'Page1.html';
+    });
+</script>
     // Проверяем, есть ли сохраненное имя
 document.addEventListener('DOMContentLoaded', function() {
     const tg = window.Telegram?.WebApp;

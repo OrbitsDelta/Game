@@ -1,81 +1,96 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Регистрация</title>
-<style>
-  body {
-    background: #111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  
-  .content-block {
-    text-align: center;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-  
-  .info-text {
-    color: #fff;
-    font-size: 18px;
-    margin-bottom: 25px;
-    line-height: 1.5;
-  }
-  
-  .neon-btn {
-    /* Ваши существующие стили кнопки */
-    padding: 15px 30px;
-    font-size: 18px;
-    color: white;
-    background: #1a1a1a;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    /* Неоновые эффекты */
-    box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
-    transition: all 0.3s ease;
-  }
-  
-  .neon-btn:hover {
-    box-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        body {
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .content-block {
+            text-align: center;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .info-text {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .neon-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background: #1a1a1a;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .neon-btn:hover {
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+        }
+    </style>
 </head>
 <body>
+    <div class="content-block">
+        <p class="info-text">
+            Перед началом, пожалуйста, зарегистрируйтесь
+        </p>
+        
+        <button class="neon-btn" id="neonBtn">
+            Начать регистрацию
+        </button>
+    </div>
 
-<div class="content-block">
-  <p class="info-text">
-    Перед началом, пожалуйста, зарегистрируйтесь
-  </p>
-  
-  <button class="neon-btn" id="neonBtn">Начать регистрацию</button>
-<script>
-    document.getElementById('neonBtn').addEventListener('click', function() {
-        window.location.href = 'Page1.html';
-    });
-</script>
-    // Проверяем, есть ли сохраненное имя
-document.addEventListener('DOMContentLoaded', function() {
-    const tg = window.Telegram?.WebApp;
-    
-    // Проверяем, есть ли сохраненное имя в localStorage или Telegram
-    const playerName = localStorage.getItem('playerName') || 
-                      (tg?.initDataUnsafe?.user?.first_name || 'Гость');
-    
-    if (playerName && playerName !== 'Гость') {
-        tg?.expand(); // Раскрываем WebApp на весь экран
-        window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
-    }
-});
-</script>
+    <script>
+        // Проверяем, есть ли сохраненное имя
+        function checkAuth() {
+            const tg = window.Telegram?.WebApp;
+            const playerName = localStorage.getItem('playerName') || 
+                             (tg?.initDataUnsafe?.user?.first_name || null);
+            
+            if (playerName) {
+                if (tg) {
+                    tg.expand();
+                    tg.enableClosingConfirmation();
+                }
+                window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
+                return true;
+            }
+            return false;
+        }
 
+        // Основная инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Сначала проверяем авторизацию
+            if (!checkAuth()) {
+                // Если не авторизован - вешаем обработчик на кнопку
+                const neonBtn = document.getElementById('neonBtn');
+                if (neonBtn) {
+                    neonBtn.addEventListener('click', function() {
+                        window.location.href = 'Page1.html';
+                    });
+                } else {
+                    console.error('Кнопка neonBtn не найдена!');
+                }
+            }
+        });
+    </script>
 </body>
 </html>

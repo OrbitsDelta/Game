@@ -12,17 +12,6 @@ function handleLogout() {
     // Закрытие модальных окон
     hideConfirmModal();
     
-    // Оптимизированный редирект
-    if (window.Telegram?.WebApp?.close) {
-        Telegram.WebApp.close();
-        setTimeout(() => {
-            window.location.href = 'Page1.html?logout=1&t=' + Date.now();
-        }, 300);
-    } else {
-        // Жесткий редирект для обычного браузера
-        document.body.innerHTML = '';
-        setTimeout(() => {
-            window.location.replace('Page1.html?logout=1&t=' + Date.now());
-        }, 100);
-    }
+    // Упрощенный редирект
+    window.location.href = 'Page1.html?logout=1&t=' + Date.now();
 }

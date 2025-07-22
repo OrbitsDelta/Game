@@ -171,44 +171,38 @@ body::after {
     </div>
     
 <script>
-    // Полная очистка перед регистрацией
+    // Жесткий сброс при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        // Очищаем возможные артефакты WebApp
-        if (window.Telegram?.WebApp?.close) {
-            Telegram.WebApp.close();
+        // Принудительный сброс стилей
+        document.body.style.cssText = 'margin: 0; padding: 0; overflow: hidden !important; width: 100vw; height: 100vh;';
+        document.documentElement.style.cssText = 'margin: 0; padding: 0; overflow: hidden !important;';
+        
+        // Очистка параметров URL
+        if (window.location.search.includes('logout')) {
+            history.replaceState(null, null, window.location.pathname);
+            localStorage.removeItem('playerName');
+            // Принудительный ререндер
+            setTimeout(() => document.body.offsetHeight, 50);
         }
         
-        // Проверяем параметр выхода
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('logout') === '1') {
-            // Полный сброс состояния
-            localStorage.clear();
-            document.body.style.overflow = 'hidden';
-            document.body.innerHTML = document.body.innerHTML; // Принудительный ререндер
-        }
-        
-        // Автоперенаправление только для не вышедших пользователей
-        if (!params.get('logout') && localStorage.getItem('playerName')) {
+        // Проверка имени только при чистом открытии
+        if (!window.location.search && localStorage.getItem('playerName')) {
             window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
         }
     });
 
+    // Обработчик формы
     document.getElementById('regForm').addEventListener('submit', function(e) {
-        const nameInput = document.getElementById('name');
-        const name = nameInput.value.trim();
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
         
         if (name.length < 3 || name.length > 15) {
             alert('Имя должно содержать от 3 до 15 символов');
-            e.preventDefault();
             return;
         }
         
         localStorage.setItem('playerName', name);
-        
-        // Принудительное обновление WebApp
-        if (window.Telegram?.WebApp?.expand) {
-            Telegram.WebApp.expand();
-        }
+        window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
     });
 </script>
 </body></html>

@@ -461,11 +461,12 @@
         }
 
         // Показать окно подтверждения выхода
-        function showConfirmModal() {
-            confirmModal.style.display = 'block';
-            modalOverlay.style.display = 'block';
-            profileModal.style.display = 'none';
-        }
+function showConfirmModal() {
+    confirmModal.style.display = 'block';
+    modalOverlay.style.display = 'block';
+    profileModal.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+}
 
         // Скрыть окно подтверждения выхода
         function hideConfirmModal() {

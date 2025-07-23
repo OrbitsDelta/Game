@@ -361,7 +361,30 @@
             tg.setHeaderColor('#121212'); // Устанавливаем цвет заголовка
             tg.backgroundColor = '#121212'; // Устанавливаем цвет фона
         }
-
+    // ===== НАЧАЛО ДОБАВЛЯЕМОГО КОДА =====
+    // Проверка регистрации (добавить после блока Telegram)
+    const params = new URLSearchParams(window.location.search);
+    const nameParam = params.get('name');
+    
+    // Если нет имени ни в URL, ни в хранилище
+    if (!nameParam && !localStorage.getItem('playerName')) {
+        // Для Telegram - закрываем и просим регистрацию
+        if (tg) {
+            tg.close();
+        } 
+        // Для браузера - переадресация
+        else {
+            window.location.href = 'Page1.html?from=game';
+        }
+        return;
+    }
+    
+    // Если имя в URL, но нет в хранилище - сохраняем
+    if (nameParam && !localStorage.getItem('playerName')) {
+        localStorage.setItem('playerName', decodeURIComponent(nameParam));
+    }
+    // ===== КОНЕЦ ДОБАВЛЯЕМОГО КОДА =====
+        
         // Установка правильной высоты для iOS
         function setAppHeight() {
             const doc = document.documentElement;

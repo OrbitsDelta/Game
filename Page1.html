@@ -185,13 +185,17 @@
             localStorage.setItem('playerName', name);
             
             // Если это Telegram WebApp - отправляем данные в бота и закрываем WebApp
-            if (tg) {
-                tg.sendData(JSON.stringify({ 
-                    action: 'register', 
-                    name: name 
-                }));
-                tg.close();
-            } 
+if (tg) {
+    tg.expand(); // Раскрываем на весь экран
+    tg.setHeaderColor("secondary_bg"); // Убираем шторку
+    tg.enableClosingConfirmation(); // Запрещаем случайное закрытие
+    
+    tg.sendData(JSON.stringify({ 
+        action: 'register', 
+        name: name 
+    }));
+    tg.close();
+}
             // Если обычный браузер - перенаправляем в игру
             else {
                 window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();

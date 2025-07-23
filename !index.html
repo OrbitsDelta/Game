@@ -73,58 +73,60 @@
         </button>
     </div>
 
-    <script>
-// Инициализация Telegram WebApp
-const tg = window.Telegram?.WebApp;
-if (tg) {
-    tg.expand(); // Разворачиваем на весь экран
-    tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
-    tg.setHeaderColor("secondary_bg"); // Лучший способ убрать шторку
-    
-    // ИЛИ, если хотите задать конкретный цвет:
-    // tg.setHeaderColor('#111111'); 
-    // tg.BackButton.hide(); // Дополнительно скрываем кнопку "Назад"
-}
+<script>
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor("secondary_bg");
+        tg.backgroundColor = '#111111';
+    }
 
-        // Установка правильной высоты для iOS
-        function setAppHeight() {
-            const doc = document.documentElement;
-            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
-        }
+    // Установка правильной высоты для iOS
+    function setAppHeight() {
+        const doc = document.documentElement;
+        doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+    }
+
+    // Проверка авторизации
+    function checkAuth() {
+        // 1. Проверяем имя в localStorage
+        const savedName = localStorage.getItem('playerName');
         
-        window.addEventListener('resize', setAppHeight);
-        setAppHeight();
-
-        // Проверяем, есть ли сохраненное имя
-        function checkAuth() {
-            const playerName = localStorage.getItem('playerName') || 
-                             (tg?.initDataUnsafe?.user?.first_name || null);
-            
-            if (playerName) {
-                window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
-                return true;
-            }
-            return false;
+        // 2. Для Telegram - проверяем данные пользователя
+        const tgUser = tg?.initDataUnsafe?.user;
+        const tgName = tgUser ? `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() : null;
+        
+        // Если есть сохраненное имя или пользователь Telegram
+        if (savedName || tgName) {
+            const nameToUse = savedName || tgName;
+            // Принудительный переход с очисткой кеша
+            window.location.replace(`game.html?name=${encodeURIComponent(nameToUse)}&t=${Date.now()}`);
+            return true;
         }
+        return false;
+    }
 
-        // Основная инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            // Запрет масштабирования на iOS
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
-            
-            // Сначала проверяем авторизацию
-            if (!checkAuth()) {
-                // Если не авторизован - вешаем обработчик на кнопку
-                const neonBtn = document.getElementById('neonBtn');
-                if (neonBtn) {
-                    neonBtn.addEventListener('click', function() {
-                        window.location.href = 'Page1.html';
-                    });
-                }
-            }
+    // Основная инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        // Настройка высоты
+        setAppHeight();
+        window.addEventListener('resize', setAppHeight);
+        
+        // Запрет масштабирования на iOS
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
         });
-    </script>
+        
+        // Проверяем авторизацию
+        if (!checkAuth()) {
+            // Вешаем обработчик на кнопку, если не авторизованы
+            document.getElementById('neonBtn').addEventListener('click', function() {
+                window.location.href = 'Page1.html';
+            });
+        }
+    });
+</script>
 </body>
 </html>

@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>OrbitsDelta - Старт</title>
+    <title>Регистрация</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --app-height: 100vh;
+            --app-height: 100%;
         }
         
-        body, html {
+        html, body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -19,80 +20,108 @@
             overflow: hidden;
             font-family: Arial, sans-serif;
             background: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
         }
         
-        .start-container {
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .content-block {
             text-align: center;
+            max-width: 300px;
+            margin: 0 auto;
             padding: 20px;
         }
         
-        .start-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #6a3093 0%, #4fc3f7 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
+        .info-text {
+            color: #fff;
             font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(79, 195, 247, 0.5);
-            transition: all 0.3s;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
         
-        .start-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(79, 195, 247, 0.8);
+        .neon-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background: #1a1a1a;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .neon-btn:hover {
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
         }
     </style>
 </head>
 <body>
-    <div class="start-container">
-        <button class="start-btn" id="startBtn">
-            Начать игру
+    <div class="content-block">
+        <p class="info-text">
+            Перед началом, пожалуйста, зарегистрируйтесь
+        </p>
+        
+        <button class="neon-btn" id="neonBtn">
+            Начать регистрацию
         </button>
     </div>
 
     <script>
-        // Фикс высоты для iOS
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand(); // Разворачиваем на весь экран
+            tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
+            tg.setHeaderColor('#111111'); // Устанавливаем цвет заголовка
+            tg.backgroundColor = '#111111'; // Устанавливаем цвет фона
+        }
+
+        // Установка правильной высоты для iOS
         function setAppHeight() {
-            document.documentElement.style.setProperty(
-                '--app-height', 
-                `${window.innerHeight}px`
-            );
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
         }
         
         window.addEventListener('resize', setAppHeight);
         setAppHeight();
-        
-        // Запрет масштабирования на iOS
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
-        
-        // Проверка авторизации
+
+        // Проверяем, есть ли сохраненное имя
         function checkAuth() {
-            const tg = window.Telegram?.WebApp;
-            const savedName = localStorage.getItem('playerName');
+            const playerName = localStorage.getItem('playerName') || 
+                             (tg?.initDataUnsafe?.user?.first_name || null);
             
-            if (savedName || tg?.initDataUnsafe?.user) {
-                window.location.href = `game.html?name=${
-                    encodeURIComponent(savedName || tg.initDataUnsafe.user.first_name)
-                }`;
+            if (playerName) {
+                window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
                 return true;
             }
             return false;
         }
-        
-        // Обработчик кнопки
-        document.getElementById('startBtn').addEventListener('click', () => {
+
+        // Основная инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запрет масштабирования на iOS
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            // Сначала проверяем авторизацию
             if (!checkAuth()) {
-                window.location.href = 'Page1.html';
+                // Если не авторизован - вешаем обработчик на кнопку
+                const neonBtn = document.getElementById('neonBtn');
+                if (neonBtn) {
+                    neonBtn.addEventListener('click', function() {
+                        window.location.href = 'Page1.html';
+                    });
+                }
             }
         });
-        
-        // Проверяем при загрузке
-        checkAuth();
     </script>
 </body>
 </html>

@@ -172,35 +172,49 @@
         });
         
         // Обработчик формы
-        document.getElementById('regForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            
-            if (name.length < 3 || name.length > 15) {
-                alert('Имя должно содержать от 3 до 15 символов');
-                return;
-            }
-            
-            // Сохраняем имя в localStorage
-            localStorage.setItem('playerName', name);
-            
-            // Если это Telegram WebApp - отправляем данные в бота и закрываем WebApp
-if (tg) {
-    tg.expand(); // Раскрываем на весь экран
-    tg.setHeaderColor("secondary_bg"); // Убираем шторку
-    tg.enableClosingConfirmation(); // Запрещаем случайное закрытие
+document.getElementById('regForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
     
-    tg.sendData(JSON.stringify({ 
-        action: 'register', 
-        name: name 
-    }));
-    tg.close();
-}
-            // Если обычный браузер - перенаправляем в игру
-            else {
-                window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
-            }
-        });
+    // Проверка имени
+    if (name.length < 3 || name.length > 15) {
+        alert('Имя должно содержать от 3 до 15 символов');
+        return;
+    }
+    
+    // Сохраняем имя в localStorage
+    localStorage.setItem('playerName', name);
+    
+    // Для Telegram WebApp
+    if (tg) {
+        try {
+            // Гарантированно раскрываем на весь экран
+            tg.expand(); 
+            tg.setHeaderColor("secondary_bg");
+            tg.enableClosingConfirmation();
+            
+            // Отправляем данные с обработкой ошибок
+            tg.sendData(JSON.stringify({ 
+                action: 'register', 
+                name: name 
+            }));
+            
+            // Добавляем задержку перед закрытием
+            setTimeout(() => {
+                tg.close();
+            }, 300); // 300мс для надежности
+        } catch (error) {
+            console.error('Ошибка Telegram WebApp:', error);
+            // Если что-то пошло не так - переходим обычным способом
+            window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
+        }
+    } 
+    // Для обычного браузера
+    else {
+        // Принудительный переход с очисткой кеша
+        window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
+    }
+});
         
         // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {

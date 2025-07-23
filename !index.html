@@ -74,14 +74,17 @@
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.expand(); // Разворачиваем на весь экран
-            tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
-            tg.setHeaderColor('#111111'); // Устанавливаем цвет заголовка
-            tg.backgroundColor = '#111111'; // Устанавливаем цвет фона
-        }
+// Инициализация Telegram WebApp
+const tg = window.Telegram?.WebApp;
+if (tg) {
+    tg.expand(); // Разворачиваем на весь экран
+    tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
+    tg.setHeaderColor("secondary_bg"); // Лучший способ убрать шторку
+    
+    // ИЛИ, если хотите задать конкретный цвет:
+    // tg.setHeaderColor('#111111'); 
+    // tg.BackButton.hide(); // Дополнительно скрываем кнопку "Назад"
+}
 
         // Установка правильной высоты для iOS
         function setAppHeight() {

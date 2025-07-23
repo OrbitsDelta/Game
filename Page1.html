@@ -6,7 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>OrbitsDelta - Регистрация</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --app-height: 100%;
@@ -147,88 +146,48 @@
         </p>
     </div>
     
-    <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.expand(); // Разворачиваем на весь экран
-            tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
-            tg.setHeaderColor('#111111'); // Устанавливаем цвет заголовка
-            tg.backgroundColor = '#111111'; // Устанавливаем цвет фона
-        }
-
-        // Установка правильной высоты для iOS
-        function setAppHeight() {
-            const doc = document.documentElement;
-            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
-        }
-        
-        window.addEventListener('resize', setAppHeight);
-        setAppHeight();
-        
-        // Запрет масштабирования на iOS
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        });
-        
-        // Обработчик формы
-document.getElementById('regForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    
-    // Проверка имени
-    if (name.length < 3 || name.length > 15) {
-        alert('Имя должно содержать от 3 до 15 символов');
-        return;
-    }
-    
-    // Сохраняем имя в localStorage
-    localStorage.setItem('playerName', name);
-    
-    // Для Telegram WebApp
+<script>
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram?.WebApp;
     if (tg) {
-        try {
-            // Гарантированно раскрываем на весь экран
-            tg.expand(); 
-            tg.setHeaderColor("secondary_bg");
-            tg.enableClosingConfirmation();
-            
-            // Отправляем данные с обработкой ошибок
-            tg.sendData(JSON.stringify({ 
-                action: 'register', 
-                name: name 
-            }));
-            
-            // Добавляем задержку перед закрытием
-            setTimeout(() => {
-                tg.close();
-            }, 300); // 300мс для надежности
-        } catch (error) {
-            console.error('Ошибка Telegram WebApp:', error);
-            // Если что-то пошло не так - переходим обычным способом
-            window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
-        }
-    } 
-    // Для обычного браузера
-    else {
-        // Принудительный переход с очисткой кеша
-        window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor("secondary_bg");
+        tg.backgroundColor = '#111111';
     }
-});
+
+    // Установка правильной высоты
+    function setAppHeight() {
+        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+    }
+    
+    window.addEventListener('resize', setAppHeight);
+    setAppHeight();
+    
+    // Обработчик формы
+    document.getElementById('regForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
         
-        // При загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Очистка параметров URL
-            if (window.location.search.includes('logout')) {
-                history.replaceState(null, null, window.location.pathname);
-                localStorage.removeItem('playerName');
-            }
-            
-            // Проверка имени только при чистом открытии
-            if (!window.location.search && localStorage.getItem('playerName')) {
-                window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
-            }
-        });
-    </script>
+        if (name.length < 3 || name.length > 15) {
+            alert('Имя должно содержать от 3 до 15 символов');
+            return;
+        }
+        
+        localStorage.setItem('playerName', name);
+        
+        if (tg) {
+            tg.sendData(JSON.stringify({action: 'register', name: name}));
+            setTimeout(() => tg.close(), 300);
+        } else {
+            window.location.href = `game.html?name=${encodeURIComponent(name)}&fs=1`;
+        }
+    });
+
+    // Проверка авторизации при загрузке
+    if (!window.location.search && localStorage.getItem('playerName')) {
+        window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
+    }
+</script>
 </body>
 </html>

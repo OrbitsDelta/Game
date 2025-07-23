@@ -7,7 +7,121 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>OrbitsDelta - Регистрация</title>
     <style>
-        /* ... (ваши существующие стили остаются без изменений) ... */
+        :root {
+            --app-height: 100%;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: var(--app-height);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #111;
+            color: #fff;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .registration-container {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            width: calc(100% - 40px);
+            max-width: 400px;
+            box-shadow: 0 0 25px rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+        
+        .info-text {
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        
+        .input-field {
+            width: calc(100% - 30px);
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #222;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #6a3093 0%, #4fc3f7 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .warning {
+            color: #ff9800;
+            font-size: 14px;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 480px) {
+            .registration-container {
+                padding: 20px;
+                border-radius: 0;
+                width: 100%;
+                max-width: none;
+                height: var(--app-height);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -42,17 +156,6 @@
         window.addEventListener('resize', setAppHeight);
         setAppHeight();
         
-        // Инициализация Telegram WebApp
-        function initTelegramWebApp() {
-            const tg = window.Telegram?.WebApp;
-            if (tg) {
-                tg.expand();
-                tg.enableClosingConfirmation();
-                return tg;
-            }
-            return null;
-        }
-        
         // Запрет масштабирования на iOS
         document.addEventListener('gesturestart', function(e) {
             e.preventDefault();
@@ -62,7 +165,7 @@
         document.getElementById('regForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value.trim();
-            const tg = initTelegramWebApp();
+            const tg = window.Telegram?.WebApp;
             
             if (name.length < 3 || name.length > 15) {
                 alert('Имя должно содержать от 3 до 15 символов');
@@ -72,26 +175,29 @@
             // Сохраняем имя в localStorage
             localStorage.setItem('playerName', name);
             
+            // Если это Telegram WebApp - отправляем данные в бота и закрываем WebApp
             if (tg) {
                 tg.sendData(JSON.stringify({ 
                     action: 'register', 
                     name: name 
                 }));
                 tg.close();
-            } else {
+            } 
+            // Если обычный браузер - перенаправляем в игру
+            else {
                 window.location.href = 'game.html?name=' + encodeURIComponent(name) + '&t=' + Date.now();
             }
         });
         
-        // Инициализация при загрузке
+        // При загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            initTelegramWebApp();
-            
+            // Очистка параметров URL
             if (window.location.search.includes('logout')) {
                 history.replaceState(null, null, window.location.pathname);
                 localStorage.removeItem('playerName');
             }
             
+            // Проверка имени только при чистом открытии
             if (!window.location.search && localStorage.getItem('playerName')) {
                 window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
             }

@@ -2,9 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>OrbisDelta - Скоро открытие!</title>
     <style>
         :root {
+            --app-height: 100%;
             --neon-color: #0af;
             --neon-glow: 0 0 10px var(--neon-color),
                          0 0 20px var(--neon-color),
@@ -12,15 +16,18 @@
             --danger-color: #f55;
         }
 
-        body {
+        html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
             width: 100%;
+            height: var(--app-height);
             overflow: hidden;
             font-family: 'Arial', sans-serif;
             background: #121212;
             color: #fff;
+        }
+
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -310,9 +317,8 @@
     <!-- Основной контент -->
     <div class="main-container">
         <h1 class="title">OrbitsDelta</h1>
-        <p class="message">Мы готовим для вас что-то невероятное!<br>
-            Скоро здесь появится захватывающая космическая игра.</p>
-        <div class="coming-soon">Игра будет позже!</div>
+        <p class="message">Игра находится в разработке<br>Скоро будет доступна!</p>
+        <div class="coming-soon">СКОРО ОТКРЫТИЕ</div>
     </div>
 
     <!-- Оверлей для модальных окон -->
@@ -346,10 +352,25 @@
     </div>
 
     <script>
+        // Установка правильной высоты для iOS
+        function setAppHeight() {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+        }
+        
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight();
+        
+        // Запрет масштабирования на iOS
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
         // Инициализация Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
+            tg.enableClosingConfirmation();
         }
 
         // Состояние пользователя
@@ -451,27 +472,28 @@
         }
 
         // Обработчик выхода из аккаунта
-function handleLogout() {
-    // 1. Очищаем данные
-    localStorage.removeItem('playerName');
-    isLoggedIn = false;
-    
-    // 2. Сбрасываем UI
-    profileName.textContent = 'Гость';
-    gameName.textContent = 'Не указано';
-    profileAvatar.src = 'https://cdn-icons-png.flaticon.com/512/147/147144.png';
-    regDate.textContent = 'Не указана';
-    updateLoginStatus();
-    
-    // 3. Закрываем все модальные окна
-    hideConfirmModal();
-    hideProfileModal();
-    
-    // 4. Жесткий редирект с очисткой истории
-    setTimeout(() => {
-        window.location.replace('Page1.html?logout=1&t=' + Date.now());
-    }, 300);
-}
+        function handleLogout() {
+            // 1. Очищаем данные
+            localStorage.removeItem('playerName');
+            isLoggedIn = false;
+            
+            // 2. Сбрасываем UI
+            profileName.textContent = 'Гость';
+            gameName.textContent = 'Не указано';
+            profileAvatar.src = 'https://cdn-icons-png.flaticon.com/512/147/147144.png';
+            regDate.textContent = 'Не указана';
+            updateLoginStatus();
+            
+            // 3. Закрываем все модальные окна
+            hideConfirmModal();
+            hideProfileModal();
+            
+            // 4. Жесткий редирект с очисткой истории
+            setTimeout(() => {
+                window.location.replace('Page1.html?logout=1&t=' + Date.now());
+            }, 300);
+        }
+
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
             setupProfile();

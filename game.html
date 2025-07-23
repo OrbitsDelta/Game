@@ -5,13 +5,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>OrbisDelta - Скоро открытие!</title>
+    <title>OrbitsDelta - Игра</title>
     <style>
-        /* ... (ваши существующие стили остаются без изменений) ... */
+        :root {
+            --app-height: 100%;
+            --neon-color: #0af;
+            --neon-glow: 0 0 10px var(--neon-color),
+                         0 0 20px var(--neon-color),
+                         0 0 30px var(--neon-color);
+            --danger-color: #f55;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: var(--app-height);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #121212;
+            color: #fff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid var(--neon-color);
+            box-shadow: var(--neon-glow), inset var(--neon-glow);
+            pointer-events: none;
+            z-index: -1;
+            animation: borderGlow 2s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .ui-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .profile-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,170,255,0.2);
+            border: 1px solid var(--neon-color);
+            border-radius: 50px;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0,170,255,0.5);
+            pointer-events: auto;
+        }
+
+        .profile-btn:hover {
+            background: rgba(0,170,255,0.4);
+            box-shadow: 0 0 20px var(--neon-color);
+        }
+
+        .profile-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30,30,30,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            border: 1px solid var(--neon-color);
+            box-shadow: 0 0 30px rgba(0,170,255,0.7);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: var(--neon-color);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 2px solid var(--neon-color);
+            box-shadow: 0 0 20px var(--neon-color);
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--neon-color);
+        }
+
+        .profile-info {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .profile-info p {
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .profile-info strong {
+            color: var(--neon-color);
+        }
+
+        .logout-btn {
+            background: rgba(255, 50, 50, 0.2);
+            border: 1px solid var(--danger-color);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 50, 50, 0.4);
+            box-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .confirm-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(40,40,40,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid var(--danger-color);
+            box-shadow: 0 0 30px rgba(255, 85, 85, 0.7);
+            z-index: 1001;
+            display: none;
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        .confirm-text {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .confirm-btn {
+            background: rgba(255, 50, 50, 0.3);
+            border: 1px solid var(--danger-color);
+            color: #fff;
+        }
+
+        .confirm-btn:hover {
+            background: rgba(255, 50, 50, 0.5);
+            box-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
+        }
+
+        .cancel-btn {
+            background: rgba(0, 170, 255, 0.3);
+            border: 1px solid var(--neon-color);
+            color: #fff;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(0, 170, 255, 0.5);
+            box-shadow: 0 0 15px var(--neon-color);
+        }
+
+        @media (max-width: 768px) {
+            .profile-btn {
+                top: 15px;
+                right: 15px;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .profile-name {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- ... (ваша существующая разметка остается без изменений) ... -->
+    <!-- Игровое поле -->
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Интерфейс пользователя -->
+    <div class="ui-container">
+        <!-- Кнопка профиля -->
+        <button class="profile-btn" id="profileBtn">Профиль</button>
+    </div>
+
+    <!-- Оверлей для модальных окон -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- Модальное окно профиля -->
+    <div class="profile-modal" id="profileModal">
+        <button class="close-btn" id="closeProfileModal">×</button>
+        <div class="profile-header">
+            <img class="profile-avatar" id="profileAvatar" src="https://cdn-icons-png.flaticon.com/512/147/147144.png" alt="Аватар">
+            <h2 class="profile-name" id="profileName">Гость</h2>
+        </div>
+        <div class="profile-info">
+            <p><strong>Имя в игре:</strong> <span id="gameName">Не указано</span></p>
+            <p><strong>Дата регистрации:</strong> <span id="regDate">Сегодня</span></p>
+            <p><strong>Статус:</strong> <span id="userStatus">Новичок</span></p>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Выйти из аккаунта</button>
+    </div>
+
+    <!-- Модальное окно подтверждения выхода -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-text">
+            Вы уверены, что хотите выйти?<br>
+            Все данные аккаунта будут утеряны навсегда!
+        </div>
+        <div class="confirm-buttons">
+            <button class="confirm-btn" id="confirmLogout">Да, выйти</button>
+            <button class="cancel-btn" id="cancelLogout">Отмена</button>
+        </div>
+    </div>
 
     <script>
         // Установка правильной высоты для iOS
@@ -23,21 +326,30 @@
         window.addEventListener('resize', setAppHeight);
         setAppHeight();
         
-        // Инициализация Telegram WebApp
-        function initTelegramWebApp() {
-            const tg = window.Telegram?.WebApp;
-            if (tg) {
-                tg.expand();
-                tg.enableClosingConfirmation();
-                return tg;
-            }
-            return null;
-        }
-
         // Запрет масштабирования на iOS
         document.addEventListener('gesturestart', function(e) {
             e.preventDefault();
         });
+
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.enableClosingConfirmation();
+        }
+
+        // Инициализация игрового холста
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Установка размеров холста
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
         // Состояние пользователя
         let isLoggedIn = true;
@@ -68,7 +380,6 @@
                 return decodeURIComponent(name);
             }
 
-            const tg = window.Telegram?.WebApp;
             if (tg?.initDataUnsafe?.user) {
                 const user = tg.initDataUnsafe.user;
                 return user.first_name + (user.last_name ? ' ' + user.last_name : '');
@@ -80,18 +391,22 @@
         // Устанавливаем данные профиля
         function setupProfile() {
             const userName = getUserName();
-            const tg = window.Telegram?.WebApp;
 
+            // Устанавливаем имя
             profileName.textContent = userName;
             gameName.textContent = userName;
 
+            // Устанавливаем аватар
             if (tg?.initDataUnsafe?.user?.photo_url) {
                 profileAvatar.src = tg.initDataUnsafe.user.photo_url;
             } else {
                 profileAvatar.src = 'https://cdn-icons-png.flaticon.com/512/147/147144.png';
             }
 
+            // Устанавливаем дату регистрации
             regDate.textContent = new Date().toLocaleDateString();
+
+            // Обновляем статус
             updateLoginStatus();
         }
 
@@ -136,27 +451,48 @@
 
         // Обработчик выхода из аккаунта
         function handleLogout() {
+            // 1. Очищаем данные
             localStorage.removeItem('playerName');
             isLoggedIn = false;
             
+            // 2. Сбрасываем UI
             profileName.textContent = 'Гость';
             gameName.textContent = 'Не указано';
             profileAvatar.src = 'https://cdn-icons-png.flaticon.com/512/147/147144.png';
             regDate.textContent = 'Не указана';
             updateLoginStatus();
             
+            // 3. Закрываем все модальные окна
             hideConfirmModal();
             hideProfileModal();
             
+            // 4. Жесткий редирект с очисткой истории
             setTimeout(() => {
                 window.location.replace('Page1.html?logout=1&t=' + Date.now());
             }, 300);
         }
 
-        // Инициализация
+        // Инициализация игры
+        function initGame() {
+            // Здесь будет основной игровой цикл
+            function gameLoop() {
+                // Очищаем холст
+                ctx.fillStyle = '#121212';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Здесь будет игровая логика
+                
+                requestAnimationFrame(gameLoop);
+            }
+            
+            // Запускаем игровой цикл
+            gameLoop();
+        }
+
+        // Инициализация приложения
         document.addEventListener('DOMContentLoaded', () => {
-            initTelegramWebApp();
             setupProfile();
+            initGame();
 
             // Обработчики событий
             profileBtn.addEventListener('click', showProfileModal);
@@ -165,6 +501,7 @@
             cancelLogoutBtn.addEventListener('click', hideConfirmModal);
             confirmLogoutBtn.addEventListener('click', handleLogout);
 
+            // Обработчик клика по оверлею
             modalOverlay.addEventListener('click', () => {
                 if (confirmModal.style.display === 'block') {
                     hideConfirmModal();
@@ -173,6 +510,7 @@
                 }
             });
 
+            // Закрытие по ESC
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (confirmModal.style.display === 'block') {

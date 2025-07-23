@@ -6,7 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Регистрация</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --app-height: 100%;
@@ -74,7 +73,6 @@
     </div>
 
 <script>
-    // Инициализация Telegram WebApp
     const tg = window.Telegram?.WebApp;
     if (tg) {
         tg.expand();
@@ -83,45 +81,18 @@
         tg.backgroundColor = '#111111';
     }
 
-    // Установка правильной высоты для iOS
-    function setAppHeight() {
-        const doc = document.documentElement;
-        doc.style.setProperty('--app-height', `${window.innerHeight}px`);
-    }
-
-    // Проверка авторизации
     function checkAuth() {
-        // 1. Проверяем имя в localStorage
-        const savedName = localStorage.getItem('playerName');
-        
-        // 2. Для Telegram - проверяем данные пользователя
-        const tgUser = tg?.initDataUnsafe?.user;
-        const tgName = tgUser ? `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() : null;
-        
-        // Если есть сохраненное имя или пользователь Telegram
-        if (savedName || tgName) {
-            const nameToUse = savedName || tgName;
-            // Принудительный переход с очисткой кеша
-            window.location.replace(`game.html?name=${encodeURIComponent(nameToUse)}&t=${Date.now()}`);
+        const name = localStorage.getItem('playerName') || 
+                    (tg?.initDataUnsafe?.user?.first_name || null);
+        if (name) {
+            window.location.href = `game.html?name=${encodeURIComponent(name)}&fs=1`;
             return true;
         }
         return false;
     }
 
-    // Основная инициализация
     document.addEventListener('DOMContentLoaded', function() {
-        // Настройка высоты
-        setAppHeight();
-        window.addEventListener('resize', setAppHeight);
-        
-        // Запрет масштабирования на iOS
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        });
-        
-        // Проверяем авторизацию
         if (!checkAuth()) {
-            // Вешаем обработчик на кнопку, если не авторизованы
             document.getElementById('neonBtn').addEventListener('click', function() {
                 window.location.href = 'Page1.html';
             });

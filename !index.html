@@ -82,17 +82,24 @@
         window.addEventListener('resize', setAppHeight);
         setAppHeight();
 
+        // Инициализация Telegram WebApp
+        function initTelegramWebApp() {
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                tg.expand();
+                tg.enableClosingConfirmation();
+                return tg;
+            }
+            return null;
+        }
+
         // Проверяем, есть ли сохраненное имя
         function checkAuth() {
-            const tg = window.Telegram?.WebApp;
+            const tg = initTelegramWebApp() || {};
             const playerName = localStorage.getItem('playerName') || 
                              (tg?.initDataUnsafe?.user?.first_name || null);
             
             if (playerName) {
-                if (tg) {
-                    tg.expand();
-                    tg.enableClosingConfirmation();
-                }
                 window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
                 return true;
             }
@@ -108,16 +115,16 @@
             
             // Сначала проверяем авторизацию
             if (!checkAuth()) {
-                // Если не авторизован - вешаем обработчик на кнопку
                 const neonBtn = document.getElementById('neonBtn');
                 if (neonBtn) {
                     neonBtn.addEventListener('click', function() {
                         window.location.href = 'Page1.html';
                     });
-                } else {
-                    console.error('Кнопка neonBtn не найдена!');
                 }
             }
+            
+            // Инициализация Telegram WebApp
+            initTelegramWebApp();
         });
     </script>
 </body>

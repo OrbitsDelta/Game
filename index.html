@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Game</title>
 
-  <link rel="manifest" href="/manifest.json">
+  <!-- Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Android -->
+  <!-- PWA / Mobile -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
-
-  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- вид: black-translucent позволяет контенту быть под статус‑баром -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
@@ -28,26 +23,16 @@
       overflow: hidden;
       background-color: #000000;
     }
-    /* безопасные отступы для iOS notch и статус-бара */
     body {
       padding-top: env(safe-area-inset-top);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
       padding-bottom: env(safe-area-inset-bottom);
     }
-    /* Подстраиваем UI в зависимости от режима display-mode */
-    @media (display-mode: fullscreen) {
-      /* Стили если действительно fullscreen на Android */
-    }
-    @media (display-mode: standalone) {
-      /* Стили для iOS standalone */
-    }
   </style>
 </head>
 <body>
   <div id="app"></div>
-
-  <button id="btnFull">Включить полный экран</button>
 
   <script src="app.js"></script>
 </body>

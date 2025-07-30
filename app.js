@@ -1,14 +1,13 @@
-// ==== Telegram WebApp API ====
+// Telegram WebApp API
 const tg = window.Telegram.WebApp;
 tg.ready();
 
 try {
-  tg.expand(); // Расширяет WebApp в Telegram
+  tg.expand();
 } catch (e) {
   console.warn("Не удалось expand():", e);
 }
 
-// ==== Попытка fullscreen при загрузке ====
 window.addEventListener('load', () => {
   const el = document.documentElement;
 
@@ -24,7 +23,6 @@ window.addEventListener('load', () => {
     console.warn('Не удалось войти в fullscreen:', e);
   }
 
-  // Попытка зафиксировать ориентацию
   if (screen.orientation && screen.orientation.lock) {
     screen.orientation.lock('landscape').catch((err) => {
       console.warn('Не удалось зафиксировать ориентацию:', err);
@@ -32,13 +30,7 @@ window.addEventListener('load', () => {
   }
 });
 
-// ==== Обработка события изменения fullscreen ====
 document.addEventListener('fullscreenchange', () => {
-  if (document.fullscreenElement) {
-    console.log('Вошли в обычный fullscreen');
-  } else {
-    console.log('Вышли из fullscreen');
-  }
-
   console.log('Telegram expanded:', tg.isExpanded);
+  console.log('Fullscreen элемент:', document.fullscreenElement);
 });

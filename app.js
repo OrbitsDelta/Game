@@ -1,3 +1,12 @@
+const tg = window.Telegram.WebApp;
+tg.ready();
+
+try {
+  tg.expand(); // Расширяет WebApp, если возможно
+} catch (e) {
+  console.warn("Не удалось expand():", e);
+}
+
 document.getElementById('btnFull').addEventListener('click', () => {
   const el = document.documentElement;
   if (el.requestFullscreen) {

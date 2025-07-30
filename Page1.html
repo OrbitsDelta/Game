@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>OrbitsDelta - Регистрация</title>
+    <title>Регистрация</title>
     <style>
         :root {
             --app-height: 100%;
@@ -17,177 +17,108 @@
             width: 100%;
             height: var(--app-height);
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background: #111;
-            color: #fff;
         }
         
         body {
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+        }
+        
+        .content-block {
             text-align: center;
-        }
-        
-        .registration-container {
-            background: rgba(26, 26, 26, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            width: calc(100% - 40px);
-            max-width: 400px;
-            box-shadow: 0 0 25px rgba(0, 150, 255, 0.2);
-            border: 1px solid rgba(100, 200, 255, 0.1);
+            max-width: 300px;
             margin: 0 auto;
-            box-sizing: border-box;
-        }
-        
-        h1 {
-            color: #4fc3f7;
-            margin-bottom: 25px;
-            font-size: 24px;
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            padding: 20px;
         }
         
         .info-text {
-            color: #ccc;
+            color: #fff;
+            font-size: 18px;
             margin-bottom: 25px;
             line-height: 1.5;
-            font-size: 16px;
         }
         
-        .input-field {
-            width: calc(100% - 30px);
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            background: #222;
-            color: #fff;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
-        }
-        
-        .submit-btn {
-            background: linear-gradient(135deg, #6a3093 0%, #4fc3f7 100%);
+        .neon-btn {
+            padding: 15px 30px;
+            font-size: 18px;
             color: white;
+            background: #1a1a1a;
             border: none;
-            padding: 14px 30px;
-            font-size: 16px;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+            transition: all 0.3s ease;
         }
         
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.4);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(1px);
-        }
-        
-        .warning {
-            color: #ff9800;
-            font-size: 14px;
-            margin-top: 20px;
-            font-style: italic;
-        }
-        
-        @media (max-width: 480px) {
-            .registration-container {
-                padding: 20px;
-                border-radius: 0;
-                width: 100%;
-                max-width: none;
-                height: var(--app-height);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            
-            h1 {
-                font-size: 20px;
-            }
+        .neon-btn:hover {
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
         }
     </style>
 </head>
 <body>
-    <div class="registration-container">
-        <h1>Регистрация в OrbitsDelta</h1>
-        
+    <div class="content-block">
         <p class="info-text">
-            Введите имя, которое будет использоваться в игре.<br>
-            <strong>Помните:</strong> изменить позже его нельзя!
+            Перед началом, пожалуйста, зарегистрируйтесь
         </p>
         
-        <form action="game.html" method="get" id="regForm">
-            <input class="input-field" id="name" name="name" placeholder="Ваше игровое имя" required minlength="3" maxlength="15" pattern="[A-Za-zА-Яа-я0-9 ]+" title="Только буквы и цифры (3-15 символов)" type="text">
-            
-            <button type="submit" class="submit-btn">
-                Подтвердить регистрацию
-            </button>
-        </form>
-        
-        <p class="warning">
-            Имя должно содержать от 3 до 15 символов&nbsp;
-        </p>
+        <button class="neon-btn" id="neonBtn">
+            Начать регистрацию
+        </button>
     </div>
-    
-<script>
-    // Инициализация Telegram WebApp
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.expand();
-        tg.enableClosingConfirmation();
-        tg.setHeaderColor("secondary_bg");
-        tg.backgroundColor = '#111111';
-    }
 
-    // Установка правильной высоты
-    function setAppHeight() {
-        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
-    }
-    
-    window.addEventListener('resize', setAppHeight);
-    setAppHeight();
-    
-    // Обработчик формы
-    document.getElementById('regForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const name = document.getElementById('name').value.trim();
-        
-        if (name.length < 3 || name.length > 15) {
-            alert('Имя должно содержать от 3 до 15 символов');
-            return;
+    <script>
+        // Установка правильной высоты для iOS
+        function setAppHeight() {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
         }
         
-        localStorage.setItem('playerName', name);
-        
-        if (tg) {
-            tg.sendData(JSON.stringify({action: 'register', name: name}));
-            setTimeout(() => tg.close(), 300);
-        } else {
-            window.location.href = `game.html?name=${encodeURIComponent(name)}&fs=1`;
-        }
-    });
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight();
 
-    // Проверка авторизации при загрузке
-    if (!window.location.search && localStorage.getItem('playerName')) {
-        window.location.href = 'game.html?name=' + encodeURIComponent(localStorage.getItem('playerName'));
-    }
-</script>
+        // Проверяем, есть ли сохраненное имя
+        function checkAuth() {
+            const tg = window.Telegram?.WebApp;
+            const playerName = localStorage.getItem('playerName') || 
+                             (tg?.initDataUnsafe?.user?.first_name || null);
+            
+            if (playerName) {
+                if (tg) {
+                    tg.expand();
+                    tg.enableClosingConfirmation();
+                }
+                window.location.href = `game.html?name=${encodeURIComponent(playerName)}`;
+                return true;
+            }
+            return false;
+        }
+
+        // Основная инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запрет масштабирования на iOS
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            
+            // Сначала проверяем авторизацию
+            if (!checkAuth()) {
+                // Если не авторизован - вешаем обработчик на кнопку
+                const neonBtn = document.getElementById('neonBtn');
+                if (neonBtn) {
+                    neonBtn.addEventListener('click', function() {
+                        window.location.href = 'Page1.html';
+                    });
+                } else {
+                    console.error('Кнопка neonBtn не найдена!');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
